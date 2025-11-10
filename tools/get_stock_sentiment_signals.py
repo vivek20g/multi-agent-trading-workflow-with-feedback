@@ -17,24 +17,16 @@ def get_stock_sentiment_signals(stockname:str):
     excel_file = config['SENTIMENT']['sentiment']
     sheet_name = 'news'
     df_news = data_loader.load_data(excel_file,sheet_name)
-    print('Loaded news data for sentiment analysis')
     df_news = df_news.sort_values(by='Date')
     df_news['Date'] = pd.to_datetime(df_news['Date'])
 
     week_start_date = '2025-07-20' # Recent sentiment about the stock, like last week. depend upon data availability
     
     df_specific_news = df_news.loc[(df_news.Stock.apply(lambda x: stockname in x)) & (df_news['Date']>pd.to_datetime(week_start_date))]
-    print('Filtered news data for stock:',stockname)
-        
+    
     news_articles = df_specific_news.loc[:,'News_Synopsis'].values.tolist()
-    try:
-      sentiment_pipeline = pipeline(model="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis")
-      print('Performing sentiment analysis on recent news articles...')
-      sentiment_results = sentiment_pipeline(news_articles)
-      print('Sentiment analysis completed.')
-    except Exception as e:
-      print('Error in sentiment analysis pipeline:', e)
-      
+    sentiment_pipeline = pipeline(model="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis")
+    sentiment_results = sentiment_pipeline(news_articles)
     positives=negatives=neutral = 0
     for sentiment in sentiment_results:
       if sentiment['label'] == 'positive':
@@ -47,7 +39,6 @@ def get_stock_sentiment_signals(stockname:str):
     
     # what has been the long term sentiment trend for this stock?
     df_sentiment_trend = data_loader.load_data(excel_file, sheetname='sentiment_trend')
-    print('Loaded sentiment trend data for stocks')
     positives = (df_sentiment_trend['Sentiment'] == 'positive').sum()
     negatives = (df_sentiment_trend['Sentiment'] == 'negative').sum()
     neutrals = (df_sentiment_trend['Sentiment'] == 'neutral').sum()

@@ -69,12 +69,6 @@ class PortfolioTradingManager:
             name="MetaAgent",
             instructions=PROMPT
         )
-        print('testing sentiment analysis agent separately...')
-        test_agent = SentimentAnalysisAgent()
-        test_agent_output = await self.run_agent(test_agent, self.query)
-        test_agent_output_text = test_agent_output.final_output
-        print('Test Agent Output:', test_agent_output_text)
-        
         agent_a = MarketDataAgent()
         agent_b = TechnicalAnalysisAgent()
         agent_c = FundamentalAnalysisAgent()

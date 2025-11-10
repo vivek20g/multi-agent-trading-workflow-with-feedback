@@ -1,5 +1,6 @@
 python-dotenv
 tensorflow==2.19.0
+tf-keras
 yfinance
 openpyxl
 openai-agents
